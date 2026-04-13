@@ -7,6 +7,9 @@ voltado ao monitoramento, detecção e emissão de alertas para incêndios e ala
 O sistema foi concebido a partir da utilização de plataformas microcontroladas do tipo ESP8266, 
 integradas a sensores de temperatura, umidade, gases e nível de água. A interface de monitoramento 
 foi desenvolvida por meio do Grafana e a comunicação é realizada através de uma rede ad-hoc formada entre os sensores.
+<img width="1280" height="720" alt="Imagens do TCC" src="https://github.com/user-attachments/assets/c670eca9-6129-4c8f-bb2c-273c1274db83" />
+
+
 
 <details>
 <summary>INTRODUÇÃO</summary>
