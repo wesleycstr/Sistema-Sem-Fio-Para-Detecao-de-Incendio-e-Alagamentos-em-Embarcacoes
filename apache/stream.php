@@ -1,6 +1,7 @@
 <?php
 
 include 'conexao.php';
+include 'processar_alertas.php';
 
 header('Content-Type: text/event-stream');
 header('Cache-Control: no-cache');
@@ -13,6 +14,9 @@ while (ob_get_level() > 0) {
 ob_implicit_flush(true);
 
 while(true){
+
+processarAlertas($conn);
+
 
 $sql = "
 
@@ -117,6 +121,14 @@ while($row = $result->fetch_assoc()){
 
         <td>{$row['data_hora']}</td>
 
+        <td> <button class='btnConfig' onclick='abrirModal( {$row['id']})'>
+
+⚙️
+
+</button>
+
+</td>
+
     </tr>
 
     ";
@@ -130,7 +142,7 @@ if($erroGeral){
 
     <tr>
 
-        <td colspan='7'
+        <td colspan='8'
             style='background:#b71c1c;
                    color:white;
                    text-align:center;
