@@ -49,33 +49,55 @@ $result = $conn->query($sql);
 
 $html = "";
 
+$erroGeral = false;
+
 while($row = $result->fetch_assoc()){
 
     $classe = "";
     $cor = "#161616";
     $statusTexto = "DESCONHECIDO";
 
-    switch($row['status']){
-
-        case 1:
-            $cor = "#2e7d32";
-            $statusTexto = "NORMAL";
-            break;
-
-        case 2:
-            $cor = "#f9a825";
-            $statusTexto = "ATENÇÃO";
-            break;
-
-        case 3:
-            $classe = "alarme";
-            $statusTexto = "ALARME";
-            break;
-    }
-
     $temperatura = $row['temperatura'] ?? '--';
     $umidade = $row['umidade'] ?? '--';
     $gas = $row['gas_co'] ?? '--';
+
+    $ultimaAtualizacao = strtotime($row['data_hora']);
+    $agora = time();
+
+    /* diferença em segundos */
+    $diferenca = $agora - $ultimaAtualizacao;
+
+    /* sensor offline se passar de 10 segundos */
+    $offline = $diferenca > 10;
+
+    if($offline){
+
+        $cor = "#424242";
+        $statusTexto = "OFFLINE";
+        $classe = "";
+        $erroGeral = true;
+
+    }else{
+
+        switch($row['status']){
+
+            case 1:
+                $cor = "#2e7d32";
+                $statusTexto = "NORMAL";
+                break;
+
+            case 2:
+                $cor = "#f9a825";
+                $statusTexto = "ATENÇÃO";
+                break;
+
+            case 3:
+                $classe = "alarme";
+                $statusTexto = "ALARME";
+                break;
+        }
+
+    }
 
     $html .= "
 
@@ -98,6 +120,30 @@ while($row = $result->fetch_assoc()){
     </tr>
 
     ";
+}
+
+/* mensagem de erro */
+
+if($erroGeral){
+
+    $html = "
+
+    <tr>
+
+        <td colspan='7'
+            style='background:#b71c1c;
+                   color:white;
+                   text-align:center;
+                   font-weight:bold;
+                   font-size:18px;'>
+
+            ⚠ ERRO: EXISTEM SENSORES SEM ATUALIZAÇÃO
+
+        </td>
+
+    </tr>
+
+    " . $html;
 }
 
 echo "data: " . str_replace("\n", "", $html) . "\n\n";
